@@ -2856,6 +2856,7 @@ class InstructionTranslatorBase(
                     # frames[i][num_stack:] = frame i live locals
                 ]
             )
+            # current stack state: frames
         else:
             argnames = tuple(meta.locals_names.keys())
             argnames_null = tuple(meta.locals_null_keys)
