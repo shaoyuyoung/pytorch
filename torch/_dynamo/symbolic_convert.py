@@ -2856,18 +2856,6 @@ class InstructionTranslatorBase(
                     # frames[i][num_stack:] = frame i live locals
                 ]
             )
-            resume_codes.append(new_code)
-
-            # Add original GraphModule context to the resume function to handle
-            # the case of a graph break while tracing a GraphModule
-            orig_graphmodule_maybe = code_context.get_context(cur_tx.f_code).get(
-                "orig_graphmodule", lambda: None
-            )()
-            if orig_graphmodule_maybe and not isinstance(orig_graphmodule_maybe, weakref.ProxyTypes):
-                code_context.get_context(new_code)["orig_graphmodule"] = weakref.ref(
-                    orig_graphmodule_maybe
-                )
-            # current stack state: frames
         else:
             argnames = tuple(meta.locals_names.keys())
             argnames_null = tuple(meta.locals_null_keys)
@@ -2900,7 +2888,7 @@ class InstructionTranslatorBase(
         orig_graphmodule_maybe = code_context.get_context(self.f_code).get(
             "orig_graphmodule", lambda: None
         )()
-        if orig_graphmodule_maybe is not None:
+        if orig_graphmodule_maybe and not isinstance(orig_graphmodule_maybe, weakref.ProxyTypes):
             code_context.get_context(new_code)["orig_graphmodule"] = weakref.ref(
                 orig_graphmodule_maybe
             )
